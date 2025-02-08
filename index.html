@@ -1170,12 +1170,14 @@
                         var overlap = '50%';
                         var isInRange = false;
 
-                        // document.addEventLi
-                        drag.addEventListener("mouseup", (event) => {
+                        function event() {
                             if (isInRange) {
                                 playMusic();
-                            }
-                        });
+                            }                        }
+
+                        // document.addEventLi
+                        drag.addEventListener("mouseup", event);
+                        drag.addEventListener("touchend", event);
 
                         Draggable.create(dragBtn, {
                             type: 'x', bounds: '.drag-container', onDrag: function (e) {
