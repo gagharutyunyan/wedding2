@@ -1163,20 +1163,33 @@
                             }
                         });
 
+
+                        var drag = document.querySelector('.drag');
                         var dragBtn = $('.drag-button');
                         var dragTgt = $('.drag-target');
                         var overlap = '50%';
+                        var isInRange = false;
+
+                        // document.addEventLi
+                        drag.addEventListener("mouseup", (event) => {
+                            if (isInRange) {
+                                playMusic();
+                            }
+                        });
+
                         Draggable.create(dragBtn, {
                             type: 'x', bounds: '.drag-container', onDrag: function (e) {
                                 if (this.hitTest(dragTgt, overlap)) {
                                     $(this.target).addClass('in-range');
+                                    isInRange = true;
                                 } else {
                                     $(this.target).removeClass('in-range');
+                                    isInRange = false;
                                 }
                             }, onDragEnd: function (e) {
                                 var endPos = $(this.target).parent().width() - 32 + 'px';
                                 if ($(this.target).hasClass('in-range')) {
-                                    playMusic();
+                                    // playMusic();
                                     $(".img-border").addClass("display-none");
                                     $(".img-bottom").addClass("animation-start");
                                     $(".img-top").addClass("display-none");
