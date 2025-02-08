@@ -1101,7 +1101,6 @@
 
                         var sound = new Howl({
                             src: ['https://dl.dropbox.com/scl/fi/sxjng3rsxkfhee6zrv50q/music_ph_33.mp3?rlkey=7s2niylzk9x6qd2wu6nur8yhy&dl=0'],
-                            autoplay: true,
                             loop: true,
                             volume: 0.4,
                         });
@@ -1110,7 +1109,7 @@
                         $(".stopbgmusic").hide();
 
                         // Функция для включения музыки
-                        function playMusic() {
+                        function playMusic(e) {
                             sound.play();
                         }
 
@@ -1119,21 +1118,9 @@
                             myAudio.pause();
                         }
 
-                        // Обработчик клика на .img-border
-                        $(".img-border").on("click", function () {
-                            $(this).addClass("display-none");
-                            $(".img-bottom").addClass("animation-start");
-                            $(".img-top").addClass("display-none");
-                            $(".t-body").addClass("position-relative");
-                            playMusic();
-                            setTimeout(function () {
-                                $(".text-vis").addClass("show-text");
-                            }, 1600); // Задержка 1.2 секунды
-                        });
-
                         // Воспроизведение музыки и переключение иконок
                         $(".playbgmusic").click(function () {
-                            playMusic();
+                            playMusic(1);
                             $(this).fadeOut(fadeTime);
                             $(".stopbgmusic").fadeIn(fadeTime);
                         });
@@ -1151,7 +1138,7 @@
                             myAudio.currentTime = 0; // Сбрасываем время воспроизведения на начало
                             $(".stopbgmusic").fadeOut(fadeTime);
                             $(".playbgmusic").fadeIn(fadeTime);
-                            playMusic(); // Начинаем воспроизведение заново
+                            playMusic(2); // Начинаем воспроизведение заново
                         });
 
                         // Остановка и восстановление музыки при изменении видимости страницы
@@ -1163,7 +1150,7 @@
                                 }
                             } else {
                                 if (wasPlaying) {
-                                    playMusic(); // Возобновляем музыку, если она играла до сворачивания
+                                    playMusic(3); // Возобновляем музыку, если она играла до сворачивания
                                     wasPlaying = false; // Сбрасываем флаг
                                 }
                             }
@@ -1171,23 +1158,16 @@
 
 
                         var drag = document.querySelector('.drag');
-                        var testt = document.querySelector('.testt');
                         var dragBtn = $('.drag-button');
                         var dragTgt = $('.drag-target');
                         var overlap = '50%';
                         var isInRange = false;
 
-                        function event() {
-                            testt.textContent = 'Разблокируйте приглашениеe';
-                            if (isInRange) {
+                        drag.addEventListener("touchend", () => {
+                            if(isInRange) {
                                 playMusic();
-                                testt.textContent += isInRange;
                             }
-                        }
-
-                        // document.addEventLi
-                        drag.addEventListener("mouseup", event);
-                        drag.addEventListener("touchend", event);
+                        });
 
                         Draggable.create(dragBtn, {
                             type: 'x', bounds: '.drag-container', onDrag: function (e) {
@@ -1201,7 +1181,7 @@
                             }, onDragEnd: function (e) {
                                 var endPos = $(this.target).parent().width() - 32 + 'px';
                                 if ($(this.target).hasClass('in-range')) {
-                                    // playMusic();
+                                    // playMusic(4);
                                     $(".img-border").addClass("display-none");
                                     $(".img-bottom").addClass("animation-start");
                                     $(".img-top").addClass("display-none");
@@ -2719,7 +2699,7 @@
                             opacity: 1;
                         }
                     </style>
-                    <audio id="bg-sound" muted autoplay="false">
+                    <audio id="bg-sound">
                         <source src="https://dl.dropbox.com/scl/fi/sxjng3rsxkfhee6zrv50q/music_ph_33.mp3?rlkey=7s2niylzk9x6qd2wu6nur8yhy&dl=0">
                     </audio> <!-- nominify end --> </div>
             </div>
