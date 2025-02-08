@@ -65,7 +65,9 @@
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Lily+Script+One&family=Montserrat&display=swap"
           type="text/css"/>
     <script nomodule src="https://static.tildacdn.com/js/tilda-polyfill-1.0.min.js" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js" defer integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js" defer
+            integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">function t_onReady(func) {
         if (document.readyState != 'loading') {
             func();
@@ -1102,14 +1104,15 @@
                         var sound = new Howl({
                             src: ['https://dl.dropbox.com/scl/fi/sxjng3rsxkfhee6zrv50q/music_ph_33.mp3?rlkey=7s2niylzk9x6qd2wu6nur8yhy&dl=0'],
                             loop: true,
-                            volume: 0.4,
+                            volume: 0,
                         });
 
                         // Скрытие кнопки stopbgmusic при старте
                         $(".stopbgmusic").hide();
 
                         // Функция для включения музыки
-                        function playMusic(e) {
+                        const playMusic = (e) => {
+                            sound.volume(0.4);
                             sound.play();
                         }
 
@@ -1156,59 +1159,67 @@
                             }
                         });
 
-
-                        var drag = document.querySelector('.drag');
+                        const drag = document.querySelector('.drag-button')
                         var dragBtn = $('.drag-button');
                         var dragTgt = $('.drag-target');
                         var overlap = '50%';
-                        var isInRange = false;
+                        var isTransitionStarted = true
 
-                        drag.addEventListener("touchend", () => {
-                            if(isInRange) {
-                                playMusic();
-                            }
-                        });
+                        const call = () => {
+                            Draggable.create(dragBtn, {
+                                type: 'x', bounds: '.drag-container', onDrag: function (e) {
+                                    if (this.hitTest(dragTgt, overlap)) {
+                                        $(this.target).addClass('in-range');
+                                    } else {
+                                        $(this.target).removeClass('in-range');
+                                    }
+                                }, onDragEnd: function (e) {
+                                    var endPos = $(this.target).parent().width() - 32 + 'px';
+                                    if ($(this.target).hasClass('in-range')) {
+                                        playMusic(4);
+                                        setTimeout(function () {
+                                            $(".img-border").addClass("display-none");
+                                            $(".img-bottom").addClass("animation-start");
+                                            $(".img-top").addClass("display-none");
+                                            $(".t-body").addClass("position-relative");
+                                            $(".text-vis").addClass("show-text");
+                                        }, 1600); // Задержка 1.2 секунды
 
-                        Draggable.create(dragBtn, {
-                            type: 'x', bounds: '.drag-container', onDrag: function (e) {
-                                if (this.hitTest(dragTgt, overlap)) {
-                                    $(this.target).addClass('in-range');
-                                    isInRange = true;
-                                } else {
-                                    $(this.target).removeClass('in-range');
-                                    isInRange = false;
+                                        $(this.target).addClass('in-target');
+                                        gsap.to(this.target, {duration: 0.2, x: endPos});
+                                        gsap.to('.drag', {duration: 0.5, autoAlpha: 0, delay: 0.5});
+                                        gsap.to('.uc-over', {duration: 0.5, autoAlpha: 0, delay: 0.5});
+                                        setTimeout(function () {
+                                            $('.bg').addClass('drag-success');
+                                            gsap.to('.content', {
+                                                duration: 0.5,
+                                                display: "block",
+                                                y: 0,
+                                                autoAlpha: 1,
+                                                delay: 0.5
+                                            });
+                                        }, 1000);
+                                    } else {
+                                        gsap.to(this.target, {duration: 0.2, x: 0});
+                                    }
                                 }
-                            }, onDragEnd: function (e) {
-                                var endPos = $(this.target).parent().width() - 32 + 'px';
-                                if ($(this.target).hasClass('in-range')) {
-                                    // playMusic(4);
-                                    $(".img-border").addClass("display-none");
-                                    $(".img-bottom").addClass("animation-start");
-                                    $(".img-top").addClass("display-none");
-                                    $(".t-body").addClass("position-relative");
-                                    setTimeout(function () {
-                                        $(".text-vis").addClass("show-text");
-                                    }, 1600); // Задержка 1.2 секунды
+                            });
 
-                                    $(this.target).addClass('in-target');
-                                    gsap.to(this.target, {duration: 0.2, x: endPos});
-                                    gsap.to('.drag', {duration: 0.5, autoAlpha: 0, delay: 0.5});
-                                    gsap.to('.uc-over', {duration: 0.5, autoAlpha: 0, delay: 0.5});
-                                    setTimeout(function () {
-                                        $('.bg').addClass('drag-success');
-                                        gsap.to('.content', {
-                                            duration: 0.5,
-                                            display: "block",
-                                            y: 0,
-                                            autoAlpha: 1,
-                                            delay: 0.5
-                                        });
-                                    }, 1000);
-                                } else {
-                                    gsap.to(this.target, {duration: 0.2, x: 0});
-                                }
+                        }
+
+                        drag.addEventListener('touchstart', () => {
+                            if (isTransitionStarted) {
+                                call();
                             }
-                        });
+                            isTransitionStarted = false
+                        })
+
+                        drag.addEventListener('mousedown', () => {
+                            if (isTransitionStarted) {
+                                call();
+                            }
+                            isTransitionStarted = false
+                        })
 
                         function startButtonAnimation() {
                             gsap.to(dragBtn, {x: 10, duration: 0.5, repeat: -1, yoyo: true, ease: "power1.inOut",});
