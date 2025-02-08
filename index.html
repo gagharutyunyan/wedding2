@@ -65,6 +65,7 @@
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Lily+Script+One&family=Montserrat&display=swap"
           type="text/css"/>
     <script nomodule src="https://static.tildacdn.com/js/tilda-polyfill-1.0.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js" defer integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">function t_onReady(func) {
         if (document.readyState != 'loading') {
             func();
@@ -1098,14 +1099,19 @@
                         myAudio.volume = 0.4; // Задаём громкость
                         let wasPlaying = false; // Флаг, указывающий, играла ли музыка до сворачивания
 
+                        var sound = new Howl({
+                            src: ['https://dl.dropbox.com/scl/fi/sxjng3rsxkfhee6zrv50q/music_ph_33.mp3?rlkey=7s2niylzk9x6qd2wu6nur8yhy&dl=0'],
+                            autoplay: true,
+                            loop: true,
+                            volume: 0.4,
+                        });
+
                         // Скрытие кнопки stopbgmusic при старте
                         $(".stopbgmusic").hide();
 
                         // Функция для включения музыки
                         function playMusic() {
-                            myAudio.muted = false;
-                            myAudio.autoplay = true;
-                            myAudio.play();
+                            sound.play();
                         }
 
                         // Функция для остановки музыки
